@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react';
 import className from 'classnames/bind';
 import axios from 'axios';
 import styles from './Login.module.scss';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import images from '~/assets/images/images';
 import Cookies from 'js-cookie';
 import { ToastContainer, toast } from 'react-toastify';
@@ -10,55 +10,38 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const cx = className.bind(styles);
 
-function Login() {
-    const location = useLocation();
+const Login = () => {
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const expires = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
-    const previousPage = location.state?.from;
     const navigate = useNavigate();
 
+    const toastCustom = (message) => {
+        toast.warn(message, {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+        });
+    };
+
     const handleSubmit = () => {
+        const data = {username, password};
         axios
-            .post(`${process.env.REACT_APP_BASE_URL}/login`, {
-                username,
-                password,
+            .post(`${process.env.REACT_APP_BASE_URL}/api/auth/login`, data)
+            .then((res) => {
+                Cookies.remove('token');
+                Cookies.set('token', res.data.token, { expires });
+                navigate('/');
+                window.location.reload();
             })
-            .then(function (response) {
-                Cookies.set('token', response.data.accessToken, { expires });
-                if (previousPage === 'register') {
-                    navigate(-3);
-                } else {
-                    navigate(-1);
-                }
-                // navigate('/');
-            })
-            .catch(function (error) {
-                const err = error.response.data.message;
-                if (err === 'Missing inputs') {
-                    toast.warn('VVui lòng nhập đủ thông tin 😘.', {
-                        position: 'top-right',
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: 'light',
-                    });
-                }
-                if (err === 'Invalid credentials') {
-                    toast.warn('Không tìm thấy tài khoản của bạn 🥺. Có thể bạn đã nhập sai thông tin.', {
-                        position: 'top-right',
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: 'light',
-                    });
-                }
+            .catch((error) => {
+                const err = error.response.data.error;
+                if (err === "Invalid username or password") toastCustom("Invalid username or password");
             });
     };
 
@@ -127,7 +110,7 @@ function Login() {
                                     </Link>
                                     <span className={cx('auth-form__help-separate')}></span>
                                     <Link to={''} href="" className={cx('auth-form__help-link')}>
-                                        Cần trợ giúp?
+                                        Need help?
                                     </Link>
                                 </p>
                             </div>
@@ -137,6 +120,7 @@ function Login() {
                                     value="login"
                                     className={cx('btn', 'btn--primary', 'view-cart')}
                                     onClick={handleSubmit}
+                                    disabled = {!username || !password}
                                 >
                                     OK
                                 </button>

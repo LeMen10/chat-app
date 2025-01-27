@@ -1,13 +1,14 @@
-import { Fragment, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import className from 'classnames/bind';
 import axios from 'axios';
 import styles from './Home.module.scss';
 import Cookies from 'js-cookie';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import Contact from '~/components/Contact/Contact';
 
 const cx = className.bind(styles);
 
-function Home() {
+const Home = () => {
     const { slug } = useParams();
     const [password, setPassword] = useState('');
     const [dataEmail, setDataEmail] = useState();
@@ -24,7 +25,7 @@ function Home() {
     }, [timeLeft, navigate, resetSuccess]);
 
     if (timeLeft === 0) navigate(`/login`);
-    
+
     const handleSubmit = () => {
         const token = Cookies.get('token');
         const api = axios.create({
@@ -49,90 +50,42 @@ function Home() {
     };
 
     return (
-        <Fragment>
-            <div className={cx('modal', 'js-modal-login')}>
-                <div className={cx('modal__body')}>
-                    <div className={cx('auth-form')}>
-                        <div className={cx('auth-form__container', 'js-modal-container-login')}>
-                            {resetSuccess ? (
-                                <Fragment>
-                                    <div className={cx('auth-form__header')}>
-                                        <h3 className={cx('auth-form__heading')}>
-                                            Mật khẩu đã đặt lại mật khẩu thành công
-                                        </h3>
-                                    </div>
-                                    <div className={cx('auth-form__form')}>
-                                        <div className={cx('auth-form__form')}>
-                                            <p style={{ padding: '0 32px' }}>
-                                                Bạn đã đặt lại mật khẩu thành công cho tài khoản bằng Email{' '}
-                                                <span
-                                                    style={{
-                                                        color: 'rgba(0, 186, 131, 1)',
-                                                        fontWeight: '700',
-                                                    }}
-                                                >
-                                                    {dataEmail}
-                                                </span>
-                                            </p>
-                                        </div>
-                                        <div className={cx('auth-form__form')}>
-                                            <p style={{ padding: '0 32px' }}>
-                                                Bạn sẽ được chuyển hướng đến trang đăng nhập trong{' '}
-                                                <span>{timeLeft}</span> giây
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className={cx('auth-form__control')}>
-                                        <Link
-                                            to={'/login'}
-                                            className={cx('btn auth-form__control-back', 'btn--primary')}
-                                        >
-                                            OK
-                                        </Link>
-                                    </div>
-                                </Fragment>
-                            ) : (
-                                <Fragment>
-                                    <div className={cx('auth-form__header')}>
-                                        <h3 className={cx('auth-form__heading')}>Thiết lập mật khẩu</h3>
-                                    </div>
-
-                                    <div className={cx('auth-form__form')}>
-                                        <div className={cx('auth-form__group')}>
-                                            <input
-                                                type="password"
-                                                // placeholder="Mật khẩu cũ mà bạn đã quên 🤡"
-                                                placeholder="Nhập mật khẩu mới."
-                                                name="password"
-                                                className={cx('auth-form__input')}
-                                                id="auth-form__password-login"
-                                                value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className={cx('auth-form__control')}>
-                                        <Link to={'/'} className={cx('btn auth-form__control-back', 'btn--normal')}>
-                                            Trở lại
-                                        </Link>
-                                        <button
-                                            value="login"
-                                            className={cx('btn', 'btn--primary', 'view-cart')}
-                                            onClick={handleSubmit}
-                                            disabled={!password}
-                                        >
-                                            Tiếp tục
-                                        </button>
-                                    </div>
-                                </Fragment>
-                            )}
-                        </div>
+        <div className={cx('wrapper')}>
+            <div className={cx('container')}>
+                <div className={cx('sidebar')}>
+                    <div className={cx('search')}>
+                        <input placeholder="Search..." type="text" />
+                        <button>
+                            <i className={cx('fas fa-search')}> </i>
+                        </button>
+                    </div>
+                    <div className={cx('contacts')}>
+                        <Contact/>
+                    </div>
+                    <div className={cx('logout')}>
+                        <i className={cx('fas fa-sign-out-alt')}> </i>
+                    </div>
+                </div>
+                <div className={cx('main')}>
+                    <div className={cx('welcome')}>
+                        Welcome
+                        <span aria-label="wave" role="img">
+                            {' '}
+                            👋{' '}
+                        </span>
+                        John Doe
+                        <span aria-label="snowflake" role="img">
+                            {' '}
+                            ❄️{' '}
+                        </span>
+                    </div>
+                    <div className={cx('select-chat')}>Select a chat to start messaging</div>
+                    <div className={cx('chat-icon')}>
+                        <i className={cx('fas fa-comments')}> </i>
                     </div>
                 </div>
             </div>
-        </Fragment>
+        </div>
     );
 }
 

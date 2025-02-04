@@ -34,9 +34,11 @@ const Login = () => {
         axios
             .post(`${process.env.REACT_APP_BASE_URL}/api/auth/login`, data)
             .then((res) => {
+                console.log(res.data);
                 Cookies.remove('token');
                 Cookies.set('token', res.data.token, { expires });
                 navigate('/');
+                localStorage.setItem('user', JSON.stringify(res.data)); 
                 window.location.reload();
             })
             .catch((error) => {

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const cx = className.bind(styles);
 
-const Contact = () => {
+const Contact = ({ onSelectContact }) => {
     const [contacts, setContacts] = useState([]);
     const navigate = useNavigate();
 
@@ -17,7 +17,9 @@ const Contact = () => {
                 setContacts(res.data);
             } catch (error) {
                 console.log(error.response.status);
-                if (error.response.status === 500) { navigate('/login');}
+                if (error.response.status === 500) {
+                    navigate('/login');
+                }
             }
         })();
     }, [navigate]);
@@ -26,7 +28,7 @@ const Contact = () => {
         <>
             {contacts.length > 0
                 ? contacts.map((result) => (
-                      <div className={cx('contact')} key={result._id}>
+                      <div className={cx('contact')} key={result._id} onClick={() => onSelectContact(result)}>
                           <img alt="" height="40" src={result.profilePic} width="40" />
                           <div className={cx('name')}>{result.fullName}</div>
                           <div className={cx('status')}>

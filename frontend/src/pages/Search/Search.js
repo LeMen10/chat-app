@@ -2,7 +2,6 @@ import React, { Fragment } from 'react';
 import axios from 'axios';
 import className from 'classnames/bind';
 import styles from './Search.module.scss';
-import ProductItem from '~/layouts/components/ProductItem/ProductItem';
 import ReactPaginate from 'react-paginate';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
@@ -10,7 +9,7 @@ import { useLocation } from 'react-router-dom';
 
 const cx = className.bind(styles);
 
-function Search() {
+const Search = () => {
     const query_String = window.location.search;
     const urlParam = new URLSearchParams(query_String);
     const query = urlParam.get('_query');
@@ -77,11 +76,6 @@ function Search() {
                     {productList.length > 0 ? (
                         <Fragment>
                             <div className={cx('content-page', 'container_m')}>
-                                <div className={cx('row')}>
-                                    {productList.map((result) => (
-                                        <ProductItem key={result._id} listProduct={result} flexCol={'col-2-4'} />
-                                    ))}
-                                </div>
                                 <ReactPaginate
                                     onPageChange={handlePageClick}
                                     previousLabel={'<'}

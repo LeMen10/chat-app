@@ -176,11 +176,11 @@ const Register = () => {
 
                             <div className={cx('auth-form__aside')}>
                                 <p className={cx('auth-form__policy-text')}>
-                                    By signing up, you agree to Chat app's terms of use 
+                                    By signing up, you agree to Chat app's terms of use {' '}
                                     <Link to={''} className={cx('auth-form__text-link')}>
                                         Terms of Service
                                     </Link>{' '}
-                                    &
+                                    & {' '}
                                     <Link to={''} className={cx('auth-form__text-link')}>
                                         Privacy Policy
                                     </Link>

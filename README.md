@@ -19,7 +19,8 @@
 </ul>
 
 <h2>Setup .env file:</h2>
-<h4>/chat-app/.env</h4>
+
+# /chat-app/.env
 ```
 NODE_ENV=...
 JWT_SECRET=...
@@ -27,7 +28,7 @@ PORT=5000
 MONGO_DB_URI=...
 ```
 
-<h4>/chat-app/frontend/.env</h4>
+# /chat-app/frontend/.env
 ```
 REACT_APP_BASE_URL=http://localhost:5000
 ```

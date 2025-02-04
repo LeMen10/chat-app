@@ -12,19 +12,20 @@
 </ul>
 <br>
 
+<h2>User manual:</h2>
+-   Access the main folder and use the npm i command to install the necessary packages.
+-   Then access frontend and do the same.
+-   Finally npm start for the frontend folder and npm run server for the main folder to run the project.
+
 <h2>Setup .env file:</h2>
-    ```
-* /chat-app/.env
+```
+# /chat-app/.env
 NODE_ENV=...
 JWT_SECRET=...
 PORT=5000
 MONGO_DB_URI=...
 
-* /chat-app/frontend/.env
-REACT_APP_BASE_URL = http://localhost:5000
-    ```
-    
-<h2>User manual:</h2>
--   Access the main folder and use the npm i command to install the necessary packages.
--   Then access frontend and do the same.
--   Finally npm start for the frontend folder and npm run server for the main folder to run the project.
+# /chat-app/frontend/.env
+REACT_APP_BASE_URL=http://localhost:5000
+```
+

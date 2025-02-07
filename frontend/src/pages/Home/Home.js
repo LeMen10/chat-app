@@ -46,7 +46,7 @@ const Home = () => {
                 const res = await request.get(`/api/messages/${selectedConversation._id}`);
                 setMessages(res.data);
             } catch (error) {
-                if (error.response?.status === 400) navigate('/login');
+                if (error.response?.status === 401) navigate('/login');
             } finally {
                 setIsLoadingMessages(false);
             }
@@ -69,7 +69,7 @@ const Home = () => {
             setMessages((prevMessages) => [...prevMessages, newMessage]);
             if (socket) socket.emit('sendMessage', res.data);
         } catch (error) {
-            if (error.response?.status === 400) navigate('/login');
+            if (error.response?.status === 401) navigate('/login');
         }
     };
 

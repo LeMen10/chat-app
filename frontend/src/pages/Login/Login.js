@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import className from 'classnames/bind';
 import axios from 'axios';
 import styles from './Login.module.scss';
@@ -13,13 +13,23 @@ const cx = className.bind(styles);
 const Login = () => {
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
-    const expires = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        const token = Cookies.get('token');
+        if (token) {
+            toastCustom('You are already logged in.');
+            setTimeout(() => {
+                navigate('/');
+            }, 4000);
+        }
+    }, [navigate]);
 
     const toastCustom = (message) => {
         toast.warn(message, {
             position: 'top-right',
-            autoClose: 3000,
+            autoClose: 2000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
@@ -30,21 +40,22 @@ const Login = () => {
     };
 
     const handleSubmit = () => {
-        const data = {username, password};
+        setIsLoading(true);
+        const data = { username, password };
         axios
             .post(`${process.env.REACT_APP_BASE_URL}/api/auth/login`, data)
             .then((res) => {
-                console.log(res.data);
-                Cookies.remove('token');
-                Cookies.set('token', res.data.token, { expires });
-                navigate('/');
+                Cookies.set('token', res.data.token);
                 const { token, ...userData } = res.data;
-                localStorage.setItem('user', JSON.stringify(userData)); 
-                window.location.reload();
+                localStorage.setItem('user', JSON.stringify(userData));
+                setTimeout(() => {
+                    setIsLoading(false);
+                    navigate('/');
+                }, 3000);
             })
             .catch((error) => {
                 const err = error.response.data.error;
-                if (err === "Invalid username or password") toastCustom("Invalid username or password");
+                if (err === 'Invalid username or password') toastCustom('Invalid username or password');
             });
     };
 
@@ -52,7 +63,6 @@ const Login = () => {
         <Fragment>
             <ToastContainer
                 position="top-right"
-                autoClose={5000}
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick
@@ -62,78 +72,84 @@ const Login = () => {
                 pauseOnHover
                 theme="light"
             />
-            <div className={cx('modal', 'js-modal-login')}>
-                <div className={cx('modal__overlay')}>
-                    <img style={{ width: '100%', height: '100%' }} src={images.f8Login} alt="" />
+            {isLoading ? (
+                <div className={cx('spinner-wr')}>
+                    <div className={cx('spinner')}></div>
                 </div>
-                <div className={cx('modal__body')}>
-                    <div className={cx('auth-form')}>
-                        <div className={cx('auth-form__container', 'js-modal-container-login')}>
-                            <div className={cx('auth-form__header')}>
-                                <h3 className={cx('auth-form__heading')}>Login</h3>
-                                <Link to={'/register'} className={cx('auth-form__switch-btn', 'js-register')}>
-                                    Register
-                                </Link>
-                            </div>
+            ) : (
+                <div className={cx('modal', 'js-modal-login')}>
+                    <div className={cx('modal__overlay')}>
+                        <img style={{ width: '100%', height: '100%' }} src={images.f8Login} alt="" />
+                    </div>
+                    <div className={cx('modal__body')}>
+                        <div className={cx('auth-form')}>
+                            <div className={cx('auth-form__container', 'js-modal-container-login')}>
+                                <div className={cx('auth-form__header')}>
+                                    <h3 className={cx('auth-form__heading')}>Login</h3>
+                                    <Link to={'/register'} className={cx('auth-form__switch-btn', 'js-register')}>
+                                        Register
+                                    </Link>
+                                </div>
 
-                            <div className={cx('auth-form__form')}>
-                                <div className={cx('auth-form__group')}>
-                                    <div className={cx('with-46')}>
-                                        <input
-                                            type="text"
-                                            placeholder="Username"
-                                            name="username"
-                                            className={cx('auth-form__input')}
-                                            id="auth-form__user-login"
-                                            value={username}
-                                            onChange={(e) => setUserName(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className={cx('with-46')}>
-                                        <input
-                                            type="password"
-                                            placeholder="Password"
-                                            name="password"
-                                            className={cx('auth-form__input')}
-                                            id="auth-form__password-login"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                        />
+                                <div className={cx('auth-form__form')}>
+                                    <div className={cx('auth-form__group')}>
+                                        <div className={cx('with-46')}>
+                                            <input
+                                                type="text"
+                                                placeholder="Username"
+                                                name="username"
+                                                className={cx('auth-form__input')}
+                                                id="auth-form__user-login"
+                                                value={username}
+                                                onChange={(e) => setUserName(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className={cx('with-46')}>
+                                            <input
+                                                type="password"
+                                                placeholder="Password"
+                                                name="password"
+                                                className={cx('auth-form__input')}
+                                                id="auth-form__password-login"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className={cx('auth-form__aside')}>
-                                <p className={cx('auth-form__help')}>
-                                    <Link
-                                        to={'/forgot_password'}
-                                        className={cx('auth-form__help-link', 'auth-form__help-forgot')}
+                                <div className={cx('auth-form__aside')}>
+                                    <p className={cx('auth-form__help')}>
+                                        <Link
+                                            to={'/forgot_password'}
+                                            className={cx('auth-form__help-link', 'auth-form__help-forgot')}
+                                        >
+                                            Forgot password?
+                                        </Link>
+                                        <span className={cx('auth-form__help-separate')}></span>
+                                        <Link to={''} href="" className={cx('auth-form__help-link')}>
+                                            Need help?
+                                        </Link>
+                                    </p>
+                                </div>
+
+                                <div className={cx('auth-form__control')}>
+                                    <button
+                                        value="login"
+                                        className={cx('btn', 'btn--primary', 'view-cart')}
+                                        onClick={handleSubmit}
+                                        disabled={!username || !password}
                                     >
-                                        Forgot password?
-                                    </Link>
-                                    <span className={cx('auth-form__help-separate')}></span>
-                                    <Link to={''} href="" className={cx('auth-form__help-link')}>
-                                        Need help?
-                                    </Link>
-                                </p>
-                            </div>
-
-                            <div className={cx('auth-form__control')}>
-                                <button
-                                    value="login"
-                                    className={cx('btn', 'btn--primary', 'view-cart')}
-                                    onClick={handleSubmit}
-                                    disabled = {!username || !password}
-                                >
-                                    OK
-                                </button>
+                                        OK
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
         </Fragment>
     );
-}
+};
 
 export default Login;

@@ -16,7 +16,7 @@ const Contact = ({ onSelectContact, searchQuery }) => {
                 const res = await request.get(`/api/users`);
                 setContacts(res.data);
             } catch (error) {
-                if (error.response?.status === 400) navigate('/login');
+                if (error.response?.status === 401) navigate('/login');
             }
         };
         fetchUsers();
@@ -28,7 +28,7 @@ const Contact = ({ onSelectContact, searchQuery }) => {
                 const res = await request.get(`/api/users`, { params: { search: searchQuery } });
                 setContacts(res.data);
             } catch (error) {
-                if (error.response?.status === 400) navigate('/login');
+                if (error.response?.status === 401) navigate('/login');
             }
         };
         fetchFilteredContacts()

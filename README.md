@@ -2,6 +2,7 @@
 <br>
 
 <h2>Some Features:</h2>
+
 -   🌟 Tech stack: MERN + Socket.io
 -   🎃 Authentication && Authorization with JWT
 -   👾 Real-time messaging with Socket.io

@@ -1,44 +1,35 @@
-import styles from './Search.module.scss';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
-import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import styles from './Search.module.scss';
 
 const cx = classNames.bind(styles);
 
-function Search() {
-    const [dataSearch, setDataSearch] = useState('');
-    const navigate = useNavigate();
+const Search = ({ onSearch }) => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
 
-    const handleSubmit = () => {
-        var data = dataSearch;
-        setDataSearch('');
-        navigate(`/search?_query=${data}`);
-    };
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+        }, 500);
 
-    const handleKeyDown = (event) => {
-        if (event.key === 'Enter') {
-            handleSubmit();
-        }
-    };
+        return () => clearTimeout(handler);
+    }, [searchTerm]);
+
+    useEffect(() => {
+        onSearch(debouncedSearch);
+    }, [debouncedSearch, onSearch]);
 
     return (
         <div className={cx('search')}>
-            <div className={cx('input-search-wrap')}>
-                <input
-                    className={cx('input-search')}
-                    placeholder="Search for items..."
-                    value={dataSearch}
-                    onChange={(e) => setDataSearch(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                />
-                <button className={cx('icon-search-header')} onClick={handleSubmit}>
-                    <FontAwesomeIcon className={cx('icon-user')} icon={faMagnifyingGlass} />
-                </button>
-            </div>
+            <input
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
         </div>
     );
-}
+};
 
 export default Search;

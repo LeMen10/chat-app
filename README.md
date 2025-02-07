@@ -2,14 +2,12 @@
 <br>
 
 <h2>Some Features:</h2>
-<ul>
-    <li>🌟 Tech stack: MERN + Socket.io</li>
-    <li>🎃 Authentication && Authorization with JWT</li>
-    <li>👾 Real-time messaging with Socket.io</li>
-    <li>🐞 Error handling both on the server and on the client</li>
-    <li>⭐ At the end Deployment like a pro for FREE!</li>
-    <li>⏳  And much more!</li>
-</ul>
+-   🌟 Tech stack: MERN + Socket.io
+-   🎃 Authentication && Authorization with JWT
+-   👾 Real-time messaging with Socket.io
+-   🚀 Online user status (Socket.io and React Context)
+-   🐞 Error handling both on the server and on the client
+-   ⏳ And much more!
 
 <h2>User manual:</h2>
 <ul>
@@ -20,7 +18,7 @@
 
 <h2>Setup .env file:</h2>
 
-# /chat-app/.env
+### /chat-app/.env
 ```
 NODE_ENV=...
 JWT_SECRET=...
@@ -28,7 +26,7 @@ PORT=5000
 MONGO_DB_URI=...
 ```
 
-# /chat-app/frontend/.env
+### /chat-app/frontend/.env
 ```
 REACT_APP_BASE_URL=http://localhost:5000
 ```

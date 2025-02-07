@@ -5,10 +5,11 @@ import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import Contact from '~/components/Contact/Contact';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass, faSignOut, faPaperPlane, faSmile } from '@fortawesome/free-solid-svg-icons';
+import { faSignOut, faPaperPlane, faSmile } from '@fortawesome/free-solid-svg-icons';
 import EmojiPicker from 'emoji-picker-react';
 import request from '~/utils/request';
 import { useSocket } from '~/context/SocketProvider';
+import Search from '~/components/Search/Search';
 
 const cx = className.bind(styles);
 
@@ -45,12 +46,12 @@ const Home = () => {
                 const res = await request.get(`/api/messages/${selectedConversation._id}`);
                 setMessages(res.data);
             } catch (error) {
-                console.log(error.response?.status);
+                if (error.response?.status === 400) navigate('/login');
             } finally {
                 setIsLoadingMessages(false);
             }
         })();
-    }, [selectedConversation]);
+    }, [selectedConversation, navigate]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
@@ -65,10 +66,10 @@ const Home = () => {
             const res = await request.post(`/api/messages/send/${selectedConversation._id}`, data);
             const newMessage = res.data?.message;
             if (!newMessage || typeof newMessage !== 'object' || !newMessage._id) return;
-            setMessages((prevMessages) => [...prevMessages, res.data.message]);
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
             if (socket) socket.emit('sendMessage', res.data);
         } catch (error) {
-            console.log(error.response?.status);
+            if (error.response?.status === 400) navigate('/login');
         }
     };
 
@@ -104,18 +105,19 @@ const Home = () => {
         setSelectedMessageId(selectedMessageId === id ? null : id);
     };
 
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+    };
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('container')}>
                 <div className={cx('sidebar')}>
-                    <div className={cx('search')}>
-                        <input placeholder="Search..." type="text" />
-                        <button>
-                            <FontAwesomeIcon className={cx('icon-user')} icon={faMagnifyingGlass} />
-                        </button>
-                    </div>
+                    <Search onSearch={handleSearch} />
                     <div className={cx('contacts')}>
-                        <Contact onSelectContact={handleSelectContact} />
+                        <Contact onSelectContact={handleSelectContact} searchQuery={searchQuery}/>
                     </div>
                     <div className={cx('logout')} onClick={handleLogout}>
                         <i className={cx('fas fa-sign-out-alt')}> </i>

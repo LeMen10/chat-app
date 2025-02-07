@@ -38,7 +38,8 @@ const Login = () => {
                 Cookies.remove('token');
                 Cookies.set('token', res.data.token, { expires });
                 navigate('/');
-                localStorage.setItem('user', JSON.stringify(res.data)); 
+                const { token, ...userData } = res.data;
+                localStorage.setItem('user', JSON.stringify(userData)); 
                 window.location.reload();
             })
             .catch((error) => {

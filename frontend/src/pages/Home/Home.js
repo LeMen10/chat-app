@@ -25,6 +25,13 @@ const Home = () => {
     const inputRef = useRef(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [selectedMessageId, setSelectedMessageId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 3000);
+    }, []);
 
     useEffect(() => {
         if (!socket) return;
@@ -112,112 +119,122 @@ const Home = () => {
     };
 
     return (
-        <div className={cx('wrapper')}>
-            <div className={cx('container')}>
-                <div className={cx('sidebar')}>
-                    <Search onSearch={handleSearch} />
-                    <div className={cx('contacts')}>
-                        <Contact onSelectContact={handleSelectContact} searchQuery={searchQuery}/>
-                    </div>
-                    <div className={cx('logout')} onClick={handleLogout}>
-                        <i className={cx('fas fa-sign-out-alt')}> </i>
-                        <FontAwesomeIcon className={cx('icon-user')} icon={faSignOut} />
-                    </div>
+        <>
+            {isLoading === true ? (
+                <div className={cx('spinner-wr')}>
+                    <div className={cx('spinner')}></div>
                 </div>
-                <div className={cx('main')}>
-                    {!selectedConversation ? (
-                        <NoChatSelected fullName={userInformation.fullName} />
-                    ) : (
-                        <>
-                            <div className={cx('chat-container')}>
-                                <div className={cx('header')}>To: {selectedConversation.fullName}</div>
-                                <div className={cx('messages')}>
-                                    {isLoadingMessages ? (
-                                        <div className={cx('spinner-wr')}>
-                                            <div className={cx('spinner')}></div>
-                                        </div>
-                                    ) : (
-                                        messages.map((msg) => (
-                                            <div key={msg._id} onClick={() => handleSelectMessage(msg._id)}>
-                                                {selectedMessageId === msg._id && (
-                                                    <span className={cx('timestamp')}>
-                                                        {new Date(msg.createdAt).toLocaleTimeString([], {
-                                                            hour: '2-digit',
-                                                            minute: '2-digit',
-                                                        })}
-                                                    </span>
-                                                )}
-                                                <div
-                                                    className={cx(
-                                                        'message',
-                                                        msg.senderId === selectedConversation._id ? 'received' : 'sent',
-                                                    )}
-                                                >
-                                                    {msg.senderId === selectedConversation._id ? (
-                                                        <img
-                                                            alt="User profile"
-                                                            src={
-                                                                selectedConversation.profilePic ||
-                                                                'https://placehold.co/30x30'
-                                                            }
-                                                        />
-                                                    ) : null}
-                                                    <div className={cx('text')}>{msg.message}</div>
+            ) : (
+                <div className={cx('wrapper')}>
+                    <div className={cx('container')}>
+                        <div className={cx('sidebar')}>
+                            <Search onSearch={handleSearch} />
+                            <div className={cx('contacts')}>
+                                <Contact onSelectContact={handleSelectContact} searchQuery={searchQuery} />
+                            </div>
+                            <div className={cx('logout')} onClick={handleLogout}>
+                                <i className={cx('fas fa-sign-out-alt')}> </i>
+                                <FontAwesomeIcon className={cx('icon-user')} icon={faSignOut} />
+                            </div>
+                        </div>
+                        <div className={cx('main')}>
+                            {!selectedConversation ? (
+                                <NoChatSelected fullName={userInformation.fullName} />
+                            ) : (
+                                <>
+                                    <div className={cx('chat-container')}>
+                                        <div className={cx('header')}>To: {selectedConversation.fullName}</div>
+                                        <div className={cx('messages')}>
+                                            {isLoadingMessages ? (
+                                                <div className={cx('spinner-wr')}>
+                                                    <div className={cx('spinner')}></div>
                                                 </div>
-                                            </div>
-                                        ))
-                                    )}
-                                    <div ref={messagesEndRef}></div>
-                                </div>
+                                            ) : (
+                                                messages.map((msg) => (
+                                                    <div key={msg._id} onClick={() => handleSelectMessage(msg._id)}>
+                                                        {selectedMessageId === msg._id && (
+                                                            <span className={cx('timestamp')}>
+                                                                {new Date(msg.createdAt).toLocaleTimeString([], {
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit',
+                                                                })}
+                                                            </span>
+                                                        )}
+                                                        <div
+                                                            className={cx(
+                                                                'message',
+                                                                msg.senderId === selectedConversation._id
+                                                                    ? 'received'
+                                                                    : 'sent',
+                                                            )}
+                                                        >
+                                                            {msg.senderId === selectedConversation._id ? (
+                                                                <img
+                                                                    alt="User profile"
+                                                                    src={
+                                                                        selectedConversation.profilePic ||
+                                                                        'https://placehold.co/30x30'
+                                                                    }
+                                                                />
+                                                            ) : null}
+                                                            <div className={cx('text')}>{msg.message}</div>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            )}
+                                            <div ref={messagesEndRef}></div>
+                                        </div>
 
-                                <div className={cx('input-container')}>
-                                    <input
-                                        placeholder="Aa"
-                                        type="text"
-                                        ref={inputRef}
-                                        onFocus={() => {
-                                            if (showEmojiPicker) setShowEmojiPicker(!showEmojiPicker);
-                                        }}
-                                        onChange={(e) => {
-                                            setMessageContent(e.target.value);
-                                        }}
-                                        value={messageContent}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                sendMessage();
-                                            }
-                                        }}
-                                    />
-                                    <FontAwesomeIcon
-                                        className={cx('icon-smile')}
-                                        icon={faSmile}
-                                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                                    />
+                                        <div className={cx('input-container')}>
+                                            <input
+                                                placeholder="Aa"
+                                                type="text"
+                                                ref={inputRef}
+                                                onFocus={() => {
+                                                    if (showEmojiPicker) setShowEmojiPicker(!showEmojiPicker);
+                                                }}
+                                                onChange={(e) => {
+                                                    setMessageContent(e.target.value);
+                                                }}
+                                                value={messageContent}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        sendMessage();
+                                                    }
+                                                }}
+                                            />
+                                            <FontAwesomeIcon
+                                                className={cx('icon-smile')}
+                                                icon={faSmile}
+                                                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                                            />
 
-                                    {showEmojiPicker && (
-                                        <div className={cx('emoji-picker-container')}>
-                                            <EmojiPicker
-                                                previewConfig={{ showPreview: false }}
-                                                searchDisabled={true}
-                                                skinTonesDisabled={true}
-                                                onEmojiClick={handleEmojiClick}
-                                                height="300px"
-                                                theme="dark"
+                                            {showEmojiPicker && (
+                                                <div className={cx('emoji-picker-container')}>
+                                                    <EmojiPicker
+                                                        previewConfig={{ showPreview: false }}
+                                                        searchDisabled={true}
+                                                        skinTonesDisabled={true}
+                                                        onEmojiClick={handleEmojiClick}
+                                                        height="300px"
+                                                        theme="dark"
+                                                    />
+                                                </div>
+                                            )}
+                                            <FontAwesomeIcon
+                                                className={cx('icon-paper-plane')}
+                                                icon={faPaperPlane}
+                                                onClick={sendMessage}
                                             />
                                         </div>
-                                    )}
-                                    <FontAwesomeIcon
-                                        className={cx('icon-paper-plane')}
-                                        icon={faPaperPlane}
-                                        onClick={sendMessage}
-                                    />
-                                </div>
-                            </div>
-                        </>
-                    )}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            )}
+        </>
     );
 };
 

@@ -1,13 +1,13 @@
-<h1 align="center">MERN Stack Project: Build and Deploy a Real Time Chat App | JWT, Socket.io </h1>
+<h1 align="center">MERN Stack Project: Build and Deploy a Real Time Chat App</h1>
 <br>
 
 <h2>Some Features:</h2>
 
--   🌟 Tech stack: MERN + Socket.io
--   🎃 Authentication && Authorization with JWT
--   👾 Real-time messaging with Socket.io
--   🐞 Error handling both on the server and on the client
--   ⏳ And much more!
+-   Tech stack: MERN + Socket.io
+-   Authentication && Authorization with JWT
+-   Real-time messaging with Socket.io
+-   Error handling both on the server and on the client
+-   And much more!
 
 <h2>User manual:</h2>
 <ul>

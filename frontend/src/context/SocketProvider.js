@@ -13,7 +13,12 @@ export const SocketProvider = ({ children }) => {
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (!user) return;
-        const newSocket = io("http://localhost:5000", {
+        // const newSocket = io("http://localhost:5000", {
+        //     query: { userId: user._id },
+        // });
+
+        // production
+        const newSocket = io("https://chat-app-ctme.onrender.com", {
             query: { userId: user._id },
         });
 

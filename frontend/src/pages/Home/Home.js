@@ -146,8 +146,8 @@ const Home = () => {
                                         <div className={cx('header')}>To: {selectedConversation.fullName}</div>
                                         <div className={cx('messages')}>
                                             {isLoadingMessages ? (
-                                                <div className={cx('spinner-wr')}>
-                                                    <div className={cx('spinner')}></div>
+                                                <div className={cx('spinner-wr-ms')}>
+                                                    <div className={cx('spinner-ms')}></div>
                                                 </div>
                                             ) : (
                                                 messages.map((msg) => (
